@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:story_app/config/data/local/constants.dart';
+import 'package:story_app/config/data/local/shared_prefs_storage.dart';
 
 class DioProvider {
   final Dio dio = Dio()
@@ -20,7 +21,10 @@ class DioProvider {
 
   Future<Response> get({required String path}) async {
     try {
-      final response = await dio.get('$baseUrl$path');
+      var tokenId = await SharedPrefsStorage.getTokenId();
+
+      final response = await dio.get('$baseUrl$path',
+          options: Options(headers: {"Authorization": "Bearer $tokenId"}));
       return response;
     } catch (e) {
       throw Exception('Gagal melakukan permintaan GET: $e');
