@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:story_app/blocs/add_story/add_story_bloc.dart';
 import 'package:story_app/blocs/home/home_bloc.dart';
 import 'package:story_app/blocs/login/login_bloc.dart';
 import 'package:story_app/blocs/register/register_bloc.dart';
+import 'package:story_app/screens/add_story_screen.dart';
 import 'package:story_app/screens/home_screen.dart';
 import 'package:story_app/screens/login_screen.dart';
 import 'package:story_app/screens/register_screen.dart';
@@ -21,6 +23,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   bool isClickRegister = false;
   bool isClickLogin = false;
+  bool isClickAddStory = false;
+  bool isBackHome = false;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +66,22 @@ class _MyAppState extends State<MyApp> {
               maintainState: false,
               child: BlocProvider(
                 create: (context) => HomeBloc(),
-                child: const HomeScreen(),
+                child: HomeScreen(
+                  onTappedAddStory: (bool isSelected) {
+                    setState(() {
+                      isClickAddStory = isSelected;
+                    });
+                  },
+                ),
+              ),
+            ),
+          if (isClickAddStory == true)
+            MaterialPage(
+              key: const ValueKey("AddStoryPage"),
+              maintainState: false,
+              child: BlocProvider(
+                create: (context) => AddStoryBloc(),
+                child: const AddStoryScreen(),
               ),
             ),
         ],
@@ -73,6 +92,7 @@ class _MyAppState extends State<MyApp> {
           }
           setState(() {
             isClickRegister = false;
+            isClickAddStory = false;
           });
           return true;
         },

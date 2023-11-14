@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final Function(bool) onTappedAddStory;
+
+  const HomeScreen({super.key, required this.onTappedAddStory});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -78,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.amber,
         child: const Icon(Icons.add),
-        onPressed: () {},
+        onPressed: () => widget.onTappedAddStory(true),
       ),
     );
   }
