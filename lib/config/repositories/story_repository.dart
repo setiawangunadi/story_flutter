@@ -9,4 +9,11 @@ class StoryRepository {
     );
     return response;
   }
+
+  Future<Response> getDetailStory({required String id}) async {
+    final response = DioProvider().get(
+      path: "${CanonicalPath.listStory}/$id",
+    );
+    return response;
+  }
 }

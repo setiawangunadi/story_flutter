@@ -6,7 +6,7 @@ import 'package:story_app/config/models/get_stories_response_model.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(bool) onTappedAddStory;
-  final Function(bool) onTappedDetailStory;
+  final Function(bool, String) onTappedDetailStory;
 
   const HomeScreen({
     super.key,
@@ -72,10 +72,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 )
               : ListView.builder(
-                  itemCount: 10,
+                  itemCount: dataStories?.listStory?.length,
                   itemBuilder: (context, index) {
                     return GestureDetector(
-                      onTap: () => widget.onTappedDetailStory(true),
+                      onTap: () => widget.onTappedDetailStory(
+                          true, dataStories?.listStory?[index].id ?? ""),
                       child: Container(
                         margin: const EdgeInsets.all(8.0),
                         padding: const EdgeInsets.all(16.0),

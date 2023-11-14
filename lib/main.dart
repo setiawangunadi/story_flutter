@@ -27,6 +27,7 @@ class _MyAppState extends State<MyApp> {
   bool isClickLogin = false;
   bool isClickAddStory = false;
   bool isClickDetailStory = false;
+  String? storyId;
 
   @override
   Widget build(BuildContext context) {
@@ -74,9 +75,10 @@ class _MyAppState extends State<MyApp> {
                       isClickAddStory = isSelected;
                     });
                   },
-                  onTappedDetailStory: (bool isSelected) {
+                  onTappedDetailStory: (bool isSelected, String id) {
                     setState(() {
                       isClickDetailStory = isSelected;
+                      storyId = id;
                     });
                   },
                 ),
@@ -97,7 +99,7 @@ class _MyAppState extends State<MyApp> {
               maintainState: false,
               child: BlocProvider(
                 create: (context) => DetailStoryBloc(),
-                child: const DetailStoryScreen(),
+                child: DetailStoryScreen(id: storyId ?? ''),
               ),
             ),
         ],
@@ -109,6 +111,7 @@ class _MyAppState extends State<MyApp> {
           setState(() {
             isClickRegister = false;
             isClickAddStory = false;
+            isClickDetailStory = false;
           });
           return true;
         },
