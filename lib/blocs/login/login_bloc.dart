@@ -13,6 +13,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   LoginBloc() : super(LoginInitial()) {
     on<DoLogin>(doLogin);
+    on<DoCheckLoggedIn>(doCheckLoggedIn);
   }
 
   Future<void> doLogin(
@@ -26,7 +27,25 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       if (response.statusCode == 200) {
         LoginResponseModel data = LoginResponseModel.fromJson(response.data);
         SharedPrefsStorage.setTokenId(tokenId: data.loginResult?.token ?? "");
+        SharedPrefsStorage.setLoggedIn(loggedIn: true);
         emit(OnSuccessLogin());
+      }
+    } catch (e) {
+      emit(OnFailedLogin(message: e.toString()));
+    }
+  }
+
+  Future<void> doCheckLoggedIn(
+    DoCheckLoggedIn event,
+    Emitter<LoginState> emit,
+  ) async {
+    try {
+      emit(OnLoadingLogin());
+      bool? isLoggedIn = await SharedPrefsStorage.getLoggedIn();
+      if (isLoggedIn == true) {
+        emit(OnSuccessLogin());
+      } else {
+        emit(LoginInitial());
       }
     } catch (e) {
       emit(OnFailedLogin(message: e.toString()));

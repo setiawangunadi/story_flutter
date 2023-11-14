@@ -2,14 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class SharedPrefsStorage {
   static const String kTokenId = "tokenId";
-  static const String kSessionId = "sessionId";
-  static const String kDestinationId = "destinationId";
-  static const String kAmount = "amount";
-  static const String kSourceName = "accountSrcName";
-  static const String kDestinationName = "accountDstName";
-  static const String kInquiryId = "inquiryId";
-  static const String kStatusCode = "statusCode";
-  static const String kStatusMessage = "statusMessage";
+  static const String kLoggedIn = "loggedIn";
 
   static Future<SharedPreferences> get sharedPrefs =>
       SharedPreferences.getInstance();
@@ -22,6 +15,15 @@ class SharedPrefsStorage {
       (await sharedPrefs).setString(kTokenId, tokenId);
 
   static Future clearTokenId() async => (await sharedPrefs).remove(kTokenId);
+
+  //LoggedIn
+  static Future<bool?> getLoggedIn() async =>
+      (await sharedPrefs).getBool(kLoggedIn);
+
+  static Future setLoggedIn({required bool loggedIn}) async =>
+      (await sharedPrefs).setBool(kLoggedIn, loggedIn);
+
+  static Future clearLoggedIn() async => (await sharedPrefs).remove(kLoggedIn);
 
   static Future clearAll() async {
     (await sharedPrefs).remove(kTokenId);

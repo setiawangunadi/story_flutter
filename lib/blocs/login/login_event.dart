@@ -9,3 +9,5 @@ class DoLogin extends LoginEvent {
 
   DoLogin({required this.email, required this.password});
 }
+
+class DoCheckLoggedIn extends LoginEvent {}

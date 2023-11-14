@@ -18,12 +18,15 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   late LoginBloc loginBloc;
-  final TextEditingController ctrlEmail = TextEditingController(text: "segud@mail.com");
-  final TextEditingController ctrlPassword = TextEditingController(text: "12345678");
+  final TextEditingController ctrlEmail =
+      TextEditingController(text: "segud@mail.com");
+  final TextEditingController ctrlPassword =
+      TextEditingController(text: "12345678");
 
   @override
   void initState() {
     loginBloc = BlocProvider.of<LoginBloc>(context);
+    loginBloc.add(DoCheckLoggedIn());
     super.initState();
   }
 

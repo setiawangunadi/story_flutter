@@ -6,8 +6,13 @@ import 'package:story_app/config/models/get_stories_response_model.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(bool) onTappedAddStory;
+  final Function(bool) onTappedDetailStory;
 
-  const HomeScreen({super.key, required this.onTappedAddStory});
+  const HomeScreen({
+    super.key,
+    required this.onTappedAddStory,
+    required this.onTappedDetailStory,
+  });
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -69,59 +74,62 @@ class _HomeScreenState extends State<HomeScreen> {
               : ListView.builder(
                   itemCount: 10,
                   itemBuilder: (context, index) {
-                    return Container(
-                      margin: const EdgeInsets.all(8.0),
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8.0),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.blue,
-                            blurStyle: BlurStyle.outer,
-                            blurRadius: 4,
-                            offset: Offset(1, 1), // Shadow position
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              width: 100,
-                              height: 100,
-                              child: FittedBox(
-                                fit: BoxFit.fill,
-                                child: ClipRect(
-                                  child: Image.network(
-                                    dataStories?.listStory?[index].photoUrl ??
-                                        "",
+                    return GestureDetector(
+                      onTap: () => widget.onTappedDetailStory(true),
+                      child: Container(
+                        margin: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Colors.blue,
+                              blurStyle: BlurStyle.outer,
+                              blurRadius: 4,
+                              offset: Offset(1, 1), // Shadow position
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 100,
+                                height: 100,
+                                child: FittedBox(
+                                  fit: BoxFit.fill,
+                                  child: ClipRect(
+                                    child: Image.network(
+                                      dataStories?.listStory?[index].photoUrl ??
+                                          "",
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(width: 16),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width / 2,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    dataStories?.listStory?[index].name ?? "",
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 18),
-                                  ),
-                                  Text(
-                                    dataStories
-                                            ?.listStory?[index].description ??
-                                        "",
-                                  ),
-                                ],
+                              const SizedBox(width: 16),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width / 2,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      dataStories?.listStory?[index].name ?? "",
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.black,
+                                          fontSize: 18),
+                                    ),
+                                    Text(
+                                      dataStories
+                                              ?.listStory?[index].description ??
+                                          "",
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ]),
+                            ]),
+                      ),
                     );
                   },
                 ),
