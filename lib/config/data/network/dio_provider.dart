@@ -23,17 +23,33 @@ class DioProvider {
     try {
       var tokenId = await SharedPrefsStorage.getTokenId();
 
-      final response = await dio.get('$baseUrl$path',
-          options: Options(headers: {"Authorization": "Bearer $tokenId"}));
+      final response = await dio.get(
+        '$baseUrl$path',
+        options: Options(
+          headers: {"Authorization": "Bearer $tokenId"},
+        ),
+      );
       return response;
     } catch (e) {
       throw Exception('Gagal melakukan permintaan GET: $e');
     }
   }
 
-  Future<Response> post({required String path, dynamic data}) async {
+  Future<Response> post(
+      {required String path, dynamic data, Options? options}) async {
     try {
-      final response = await dio.post('$baseUrl$path', data: data);
+      var tokenId = await SharedPrefsStorage.getTokenId();
+
+      final response = await dio.post(
+        '$baseUrl$path',
+        data: data,
+        options: Options(
+          headers: {
+            "Authorization": "Bearer $tokenId",
+            'Content-Type': 'multipart/form-data',
+          },
+        ),
+      );
       return response;
     } catch (e) {
       throw Exception('Gagal melakukan permintaan POST: $e');

@@ -7,7 +7,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:story_app/blocs/add_story/add_story_bloc.dart';
 
 class AddStoryScreen extends StatefulWidget {
-
   const AddStoryScreen({super.key});
 
   @override
@@ -29,57 +28,87 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<AddStoryBloc, AddStoryState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is OnSuccessAddStory) {
+          setState(() {
+            imagePath = null;
+          });
+          ctrlDesc.clear();
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(state.data.message ?? ""),
+          ));
+        }
+        if (state is OnFailedAddStory) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(state.message),
+          ));
+        }
+        if (state is GetFileImageGallery) {
+          setState(() {
+            file = state.value;
+            imagePath = state.value.path;
+          });
+        }
+        if (state is GetFileImageCamera) {
+          setState(() {
+            file = state.value;
+            imagePath = state.value.path;
+          });
+        }
+      },
       builder: (context, state) {
         return Scaffold(
           appBar: AppBar(
             title: const Text("New Story"),
-            // leading: const Icon(Icons.arrow_back),
           ),
           body: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            child: Column(children: [
-              imagePath == null
-                  ? Image.network(
-                      "https://bpsdm.dephub.go.id/v2/public/file_app/struktur_image/default.png",
-                      width: 200,
-                      height: 200,
-                    )
-                  : showImage(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ElevatedButton(
-                      onPressed: () => _onCameraView(),
-                      child: const Text("Camera")),
-                  const SizedBox(width: 16),
-                  ElevatedButton(
-                      onPressed: () => _onGalleryView(),
-                      child: const Text("Gallery"))
-                ],
-              ),
-              Card(
-                  color: Colors.white,
-                  margin: const EdgeInsets.all(16.0),
-                  shape: const Border.fromBorderSide(
-                      BorderSide(color: Colors.black)),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16.0, vertical: 8.0),
-                    child: TextFormField(
-                      controller: ctrlDesc,
-                      maxLines: 8, //or null
-                      decoration: const InputDecoration.collapsed(
-                          hintText: "Description"),
-                    ),
-                  )),
-              Container(
+            child: Column(
+              children: [
+                imagePath == null
+                    ? Image.network(
+                        "https://bpsdm.dephub.go.id/v2/public/file_app/struktur_image/default.png",
+                        width: 200,
+                        height: 200,
+                      )
+                    : showImage(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                        onPressed: () => _onCameraView(),
+                        child: const Text("Camera")),
+                    const SizedBox(width: 16),
+                    ElevatedButton(
+                        onPressed: () => _onGalleryView(),
+                        child: const Text("Gallery"))
+                  ],
+                ),
+                Card(
+                    color: Colors.white,
+                    margin: const EdgeInsets.all(16.0),
+                    shape: const Border.fromBorderSide(
+                        BorderSide(color: Colors.black)),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0, vertical: 8.0),
+                      child: TextFormField(
+                        controller: ctrlDesc,
+                        maxLines: 8, //or null
+                        decoration: const InputDecoration.collapsed(
+                            hintText: "Description"),
+                      ),
+                    )),
+                Container(
                   width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: ElevatedButton(
-                      onPressed: () => _onUpload(),
-                      child: const Text("Upload")))
-            ]),
+                    onPressed: () => _onUpload(),
+                    child: const Text("Upload"),
+                  ),
+                )
+              ],
+            ),
           ),
         );
       },
@@ -90,14 +119,14 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
     final fileName = file?.name ?? "";
     final bytes = await file?.readAsBytes() ?? "";
 
-    // addStoryBloc.add(
-    //   AddStory(
-    //     description: ctrlDesc.text,
-    //     bytes: bytes,
-    //     filename: fileName,
-    //     filePath: file?.path ?? "",
-    //   ),
-    // );
+    addStoryBloc.add(
+      DoAddStory(
+        description: ctrlDesc.text,
+        bytes: bytes,
+        filename: fileName,
+        filePath: file?.path ?? "",
+      ),
+    );
   }
 
   _onGalleryView() async {
@@ -110,8 +139,7 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
         await picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile?.path != null) {
-      File file = File(pickedFile?.path ?? "");
-      // addStoryBloc.add(SetImageFileGallery(value: pickedFile!));
+      addStoryBloc.add(SetImageFileGallery(value: pickedFile!));
     }
 
     if (pickedFile != null) {}
@@ -129,8 +157,7 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
         await picker.pickImage(source: ImageSource.camera);
 
     if (pickedFile?.path != null) {
-      File file = File(pickedFile?.path ?? "");
-      // addStoryBloc.add(SetImageFileCamera(value: pickedFile!));
+      addStoryBloc.add(SetImageFileCamera(value: pickedFile!));
     }
   }
 

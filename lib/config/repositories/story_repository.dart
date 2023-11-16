@@ -16,4 +16,26 @@ class StoryRepository {
     );
     return response;
   }
+
+  Future<Response> doAddStory({
+    required String description,
+    required String imagePath,
+    required String imageName,
+    double? latitude,
+    double? longitude,
+  }) async {
+
+    FormData formData = FormData.fromMap({
+      'description': description,
+      'photo': await MultipartFile.fromFile(imagePath, filename: imageName),
+      'lat': latitude ?? 0,
+      'lon': longitude ?? 0,
+    });
+
+    final response = DioProvider().post(
+      path: CanonicalPath.listStory,
+      data: formData,
+    );
+    return response;
+  }
 }
