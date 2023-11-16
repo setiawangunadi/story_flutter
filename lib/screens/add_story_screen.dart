@@ -102,9 +102,19 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                  height: 50,
                   child: ElevatedButton(
                     onPressed: () => _onUpload(),
-                    child: const Text("Upload"),
+                    child: state is OnLoadingAddStory
+                        ? const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              CircularProgressIndicator(color: Colors.white),
+                              SizedBox(width: 16),
+                              Text("Loading")
+                            ],
+                          )
+                        : const Text("Upload"),
                   ),
                 )
               ],
