@@ -58,62 +58,67 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextFormField(
-                      controller: ctrlName,
-                      keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        labelText: "Name",
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: ctrlEmail,
-                      keyboardType: TextInputType.emailAddress,
-                      decoration: const InputDecoration(
-                        labelText: "Email",
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    TextFormField(
-                      controller: ctrlPassword,
-                      keyboardType: TextInputType.text,
-                      decoration: const InputDecoration(
-                        labelText: "Password",
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      obscureText: true,
-                    ),
-                    const SizedBox(height: 32),
-                    ElevatedButton(
-                      onPressed: state is OnLoadingRegister
-                          ? null
-                          : () => registerBloc.add(
-                                DoRegister(
-                                  name: ctrlName.text,
-                                  email: ctrlEmail.text,
-                                  password: ctrlPassword.text,
-                                ),
+                child: Center(
+                  child: SingleChildScrollView(
+                    physics: const ClampingScrollPhysics(),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextFormField(
+                          controller: ctrlName,
+                          keyboardType: TextInputType.text,
+                          decoration: const InputDecoration(
+                            labelText: "Name",
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.black,
                               ),
-                      child: const Text("Register"),
-                    )
-                  ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: ctrlEmail,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: const InputDecoration(
+                            labelText: "Email",
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: ctrlPassword,
+                          keyboardType: TextInputType.text,
+                          decoration: const InputDecoration(
+                            labelText: "Password",
+                            border: OutlineInputBorder(
+                              borderSide: BorderSide(
+                                color: Colors.black,
+                              ),
+                            ),
+                          ),
+                          obscureText: true,
+                        ),
+                        const SizedBox(height: 32),
+                        ElevatedButton(
+                          onPressed: state is OnLoadingRegister
+                              ? null
+                              : () => registerBloc.add(
+                                    DoRegister(
+                                      name: ctrlName.text,
+                                      email: ctrlEmail.text,
+                                      password: ctrlPassword.text,
+                                    ),
+                                  ),
+                          child: const Text("Register"),
+                        )
+                      ],
+                    ),
+                  ),
                 ),
               ),
             ],
