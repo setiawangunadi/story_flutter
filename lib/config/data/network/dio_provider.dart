@@ -36,7 +36,10 @@ class DioProvider {
   }
 
   Future<Response> post(
-      {required String path, dynamic data, Options? options}) async {
+      {required String path,
+      dynamic data,
+      Options? options,
+      String? contentType}) async {
     try {
       var tokenId = await SharedPrefsStorage.getTokenId();
 
@@ -46,7 +49,7 @@ class DioProvider {
         options: Options(
           headers: {
             "Authorization": "Bearer $tokenId",
-            'Content-Type': 'multipart/form-data',
+            'Content-Type': contentType?.isEmpty == true ? '' : contentType,
           },
         ),
       );
