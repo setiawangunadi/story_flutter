@@ -27,5 +27,6 @@ class SharedPrefsStorage {
 
   static Future clearAll() async {
     (await sharedPrefs).remove(kTokenId);
+    (await sharedPrefs).remove(kLoggedIn);
   }
 }

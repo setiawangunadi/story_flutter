@@ -8,3 +8,5 @@ class GetListStory extends HomeEvent {
 
   GetListStory({required this.location});
 }
+
+class DoLogout extends HomeEvent {}

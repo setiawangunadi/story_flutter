@@ -6,11 +6,13 @@ import 'package:story_app/config/models/get_stories_response_model.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(bool) onTappedAddStory;
+  final Function(bool) onTappedLogout;
   final Function(bool, String) onTappedDetailStory;
 
   const HomeScreen({
     super.key,
     required this.onTappedAddStory,
+    required this.onTappedLogout,
     required this.onTappedDetailStory,
   });
 
@@ -38,6 +40,9 @@ class _HomeScreenState extends State<HomeScreen> {
             dataStories = state.data;
           });
         }
+        if (state is OnSuccessLogout) {
+          widget.onTappedLogout(false);
+        }
       },
       builder: (context, state) {
         return Scaffold(
@@ -45,6 +50,15 @@ class _HomeScreenState extends State<HomeScreen> {
             title: const Text("List Story"),
             automaticallyImplyLeading: false,
             elevation: 0,
+            actions: [
+              GestureDetector(
+                onTap: () => homeBloc.add(DoLogout()),
+                child: const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Icon(Icons.logout),
+                ),
+              )
+            ],
           ),
           body: state is OnLoadingHome
               ? Shimmer.fromColors(

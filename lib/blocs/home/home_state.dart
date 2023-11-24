@@ -13,6 +13,8 @@ class OnSuccessHome extends HomeState {
   OnSuccessHome({required this.data});
 }
 
+class OnSuccessLogout extends HomeState {}
+
 class OnFailedHome extends HomeState {
   final String message;
   final int? statusCode;

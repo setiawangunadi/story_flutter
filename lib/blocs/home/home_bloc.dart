@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:story_app/config/data/local/shared_prefs_storage.dart';
 import 'package:story_app/config/models/get_stories_response_model.dart';
 import 'package:story_app/config/repositories/story_repository.dart';
 
@@ -12,6 +13,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
 
   HomeBloc() : super(HomeInitial()) {
     on<GetListStory>(getListStory);
+    on<DoLogout>(doLogout);
   }
 
   Future<void> getListStory(
@@ -28,6 +30,19 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           emit(OnSuccessHome(data: data));
         }
       }
+    } catch (e) {
+      emit(OnFailedHome(message: e.toString()));
+    }
+  }
+
+  Future<void> doLogout(
+    DoLogout event,
+    Emitter<HomeState> emit,
+  ) async {
+    try {
+      emit(OnLoadingHome());
+      await SharedPrefsStorage.clearAll();
+      emit(OnSuccessLogout());
     } catch (e) {
       emit(OnFailedHome(message: e.toString()));
     }
