@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:story_app/blocs/login/login_bloc.dart';
+import 'package:story_app/shared/widget/custom_toast.dart';
 
 class LoginScreen extends StatefulWidget {
   final Function(bool) onTappedRegister;
@@ -36,6 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
       listener: (context, state) {
         if (state is OnSuccessLogin) {
           widget.onTappedLogin(true);
+        }
+        if (state is OnFailedLogin) {
+          AppToast.show(context, state.message, Colors.red);
         }
       },
       builder: (context, state) {

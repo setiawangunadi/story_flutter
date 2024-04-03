@@ -3,6 +3,8 @@ import 'dart:ffi';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:story_app/config/data/exception/network.dart';
+import 'package:story_app/config/data/exception/session_expired.dart';
 import 'package:story_app/config/models/add_story_response_model.dart';
 import 'package:story_app/config/repositories/story_repository.dart';
 
@@ -25,7 +27,6 @@ class AddStoryBloc extends Bloc<AddStoryEvent, AddStoryState> {
   ) async {
     try {
       emit(OnLoadingAddStory());
-      debugPrint("ON CLICK UPLOAD");
       final response = await storyRepository.doAddStory(
         description: event.description,
         imagePath: event.filePath,
@@ -40,6 +41,10 @@ class AddStoryBloc extends Bloc<AddStoryEvent, AddStoryState> {
       if (data.error == true) {
         emit(OnFailedAddStory(message: data.message ?? ""));
       }
+    } on Network catch (e) {
+      emit(OnFailedAddStory(message: e.responseMessage));
+    } on SessionExpired catch (e) {
+      emit(OnFailedAddStory(message: e.message));
     } catch (e) {
       emit(OnFailedAddStory(message: e.toString()));
     }
@@ -52,7 +57,11 @@ class AddStoryBloc extends Bloc<AddStoryEvent, AddStoryState> {
     try {
       emit(OnLoadingAddStory());
       emit(GetFileImageCamera(value: event.value));
-    } catch (e) {
+    } on Network catch (e) {
+      emit(OnFailedAddStory(message: e.responseMessage));
+    } on SessionExpired catch (e) {
+      emit(OnFailedAddStory(message: e.message));
+    }catch (e) {
       emit(OnFailedAddStory(message: e.toString()));
     }
   }
@@ -64,7 +73,11 @@ class AddStoryBloc extends Bloc<AddStoryEvent, AddStoryState> {
     try {
       emit(OnLoadingAddStory());
       emit(GetFileImageCamera(value: event.value));
-    } catch (e) {
+    } on Network catch (e) {
+      emit(OnFailedAddStory(message: e.responseMessage));
+    } on SessionExpired catch (e) {
+      emit(OnFailedAddStory(message: e.message));
+    }catch (e) {
       emit(OnFailedAddStory(message: e.toString()));
     }
   }

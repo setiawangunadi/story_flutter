@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:story_app/blocs/register/register_bloc.dart';
+import 'package:story_app/shared/widget/custom_toast.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -34,6 +35,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 content: Text(state.data.message ?? ""),
                 duration: const Duration(seconds: 4)),
           );
+        }
+        if (state is OnFailedRegister) {
+          AppToast.show(context, state.message, Colors.red);
         }
       },
       builder: (context, state) {

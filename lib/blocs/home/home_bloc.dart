@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:story_app/config/data/exception/network.dart';
+import 'package:story_app/config/data/exception/session_expired.dart';
 import 'package:story_app/config/data/local/shared_prefs_storage.dart';
 import 'package:story_app/config/models/get_stories_response_model.dart';
 import 'package:story_app/config/repositories/story_repository.dart';
@@ -30,6 +32,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
           emit(OnSuccessHome(data: data));
         }
       }
+    } on Network catch (e) {
+      emit(OnFailedHome(message: e.responseMessage));
+    } on SessionExpired catch (e) {
+      emit(OnFailedHome(message: e.message));
     } catch (e) {
       emit(OnFailedHome(message: e.toString()));
     }
@@ -43,6 +49,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       emit(OnLoadingHome());
       await SharedPrefsStorage.clearAll();
       emit(OnSuccessLogout());
+    } on Network catch (e) {
+      emit(OnFailedHome(message: e.responseMessage));
+    } on SessionExpired catch (e) {
+      emit(OnFailedHome(message: e.message));
     } catch (e) {
       emit(OnFailedHome(message: e.toString()));
     }

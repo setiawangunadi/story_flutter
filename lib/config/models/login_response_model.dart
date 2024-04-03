@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-LoginResponseModel loginResponseModelFromJson(String str) => LoginResponseModel.fromJson(json.decode(str));
+LoginResponseModel loginResponseModelFromJson(String str) =>
+    LoginResponseModel.fromJson(json.decode(str));
 
-String loginResponseModelToJson(LoginResponseModel data) => json.encode(data.toJson());
+String loginResponseModelToJson(LoginResponseModel data) =>
+    json.encode(data.toJson());
 
 class LoginResponseModel {
   final bool? error;
@@ -19,17 +21,20 @@ class LoginResponseModel {
     this.loginResult,
   });
 
-  factory LoginResponseModel.fromJson(Map<String, dynamic> json) => LoginResponseModel(
-    error: json["error"],
-    message: json["message"],
-    loginResult: json["loginResult"] == null ? null : LoginResult.fromJson(json["loginResult"]),
-  );
+  factory LoginResponseModel.fromJson(Map<String, dynamic> json) =>
+      LoginResponseModel(
+        error: json["error"],
+        message: json["message"],
+        loginResult: json["loginResult"] == null
+            ? null
+            : LoginResult.fromJson(json["loginResult"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "error": error,
-    "message": message,
-    "loginResult": loginResult?.toJson(),
-  };
+        "error": error,
+        "message": message,
+        "loginResult": loginResult?.toJson(),
+      };
 }
 
 class LoginResult {
@@ -44,14 +49,14 @@ class LoginResult {
   });
 
   factory LoginResult.fromJson(Map<String, dynamic> json) => LoginResult(
-    userId: json["userId"],
-    name: json["name"],
-    token: json["token"],
-  );
+        userId: json["userId"],
+        name: json["name"],
+        token: json["token"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "userId": userId,
-    "name": name,
-    "token": token,
-  };
+        "userId": userId,
+        "name": name,
+        "token": token,
+      };
 }

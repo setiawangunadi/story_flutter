@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:story_app/blocs/add_story/add_story_bloc.dart';
+import 'package:story_app/shared/widget/custom_toast.dart';
 
 class AddStoryScreen extends StatefulWidget {
   const AddStoryScreen({super.key});
@@ -39,9 +40,7 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
           ));
         }
         if (state is OnFailedAddStory) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(state.message),
-          ));
+          AppToast.show(context, state.message, Colors.red);
         }
         if (state is GetFileImageGallery) {
           setState(() {

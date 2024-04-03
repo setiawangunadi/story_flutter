@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:story_app/config/data/exception/network.dart';
+import 'package:story_app/config/data/exception/session_expired.dart';
 import 'package:story_app/config/data/local/shared_prefs_storage.dart';
 import 'package:story_app/config/models/login_response_model.dart';
 import 'package:story_app/config/repositories/login_repository.dart';
@@ -30,6 +32,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         SharedPrefsStorage.setLoggedIn(loggedIn: true);
         emit(OnSuccessLogin());
       }
+    } on Network catch (e) {
+      emit(OnFailedLogin(message: e.responseMessage));
+    } on SessionExpired catch (e) {
+      emit(OnFailedLogin(message: e.message));
     } catch (e) {
       emit(OnFailedLogin(message: e.toString()));
     }
@@ -47,6 +53,10 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       } else {
         emit(LoginInitial());
       }
+    } on Network catch (e) {
+      emit(OnFailedLogin(message: e.responseMessage));
+    } on SessionExpired catch (e) {
+      emit(OnFailedLogin(message: e.message));
     } catch (e) {
       emit(OnFailedLogin(message: e.toString()));
     }

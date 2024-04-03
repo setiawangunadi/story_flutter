@@ -1,9 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:story_app/config/data/exception/network.dart';
+import 'package:story_app/config/data/exception/session_expired.dart';
 import 'package:story_app/config/models/detail_story_response_model.dart';
 import 'package:story_app/config/repositories/story_repository.dart';
 
 part 'detail_story_event.dart';
+
 part 'detail_story_state.dart';
 
 class DetailStoryBloc extends Bloc<DetailStoryEvent, DetailStoryState> {
@@ -14,19 +17,23 @@ class DetailStoryBloc extends Bloc<DetailStoryEvent, DetailStoryState> {
   }
 
   Future<void> getDetailStory(
-      GetDetailStory event,
-      Emitter<DetailStoryState> emit,
-      ) async {
+    GetDetailStory event,
+    Emitter<DetailStoryState> emit,
+  ) async {
     try {
       emit(OnLoadingDetailStory());
       final response = await storyRepository.getDetailStory(id: event.id);
       if (response.statusCode == 200) {
         DetailStoryResponseModel data =
-        DetailStoryResponseModel.fromJson(response.data);
+            DetailStoryResponseModel.fromJson(response.data);
         if (data.error == false) {
           emit(OnSuccessDetailStory(data: data));
         }
       }
+    } on Network catch (e) {
+      emit(OnFailedDetailStory(message: e.responseMessage));
+    } on SessionExpired catch (e) {
+      emit(OnFailedDetailStory(message: e.message));
     } catch (e) {
       emit(OnFailedDetailStory(message: e.toString()));
     }

@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-GetStoriesResponseModel getStoriesResponseModelFromJson(String str) => GetStoriesResponseModel.fromJson(json.decode(str));
+GetStoriesResponseModel getStoriesResponseModelFromJson(String str) =>
+    GetStoriesResponseModel.fromJson(json.decode(str));
 
-String getStoriesResponseModelToJson(GetStoriesResponseModel data) => json.encode(data.toJson());
+String getStoriesResponseModelToJson(GetStoriesResponseModel data) =>
+    json.encode(data.toJson());
 
 class GetStoriesResponseModel {
   final bool? error;
@@ -19,17 +21,23 @@ class GetStoriesResponseModel {
     this.listStory,
   });
 
-  factory GetStoriesResponseModel.fromJson(Map<String, dynamic> json) => GetStoriesResponseModel(
-    error: json["error"],
-    message: json["message"],
-    listStory: json["listStory"] == null ? [] : List<ListStory>.from(json["listStory"]!.map((x) => ListStory.fromJson(x))),
-  );
+  factory GetStoriesResponseModel.fromJson(Map<String, dynamic> json) =>
+      GetStoriesResponseModel(
+        error: json["error"],
+        message: json["message"],
+        listStory: json["listStory"] == null
+            ? []
+            : List<ListStory>.from(
+                json["listStory"]!.map((x) => ListStory.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "error": error,
-    "message": message,
-    "listStory": listStory == null ? [] : List<dynamic>.from(listStory!.map((x) => x.toJson())),
-  };
+        "error": error,
+        "message": message,
+        "listStory": listStory == null
+            ? []
+            : List<dynamic>.from(listStory!.map((x) => x.toJson())),
+      };
 }
 
 class ListStory {
@@ -52,22 +60,24 @@ class ListStory {
   });
 
   factory ListStory.fromJson(Map<String, dynamic> json) => ListStory(
-    id: json["id"],
-    name: json["name"],
-    description: json["description"],
-    photoUrl: json["photoUrl"],
-    createdAt: json["createdAt"] == null ? null : DateTime.parse(json["createdAt"]),
-    lat: json["lat"]?.toDouble(),
-    lon: json["lon"]?.toDouble(),
-  );
+        id: json["id"],
+        name: json["name"],
+        description: json["description"],
+        photoUrl: json["photoUrl"],
+        createdAt: json["createdAt"] == null
+            ? null
+            : DateTime.parse(json["createdAt"]),
+        lat: json["lat"]?.toDouble(),
+        lon: json["lon"]?.toDouble(),
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "description": description,
-    "photoUrl": photoUrl,
-    "createdAt": createdAt?.toIso8601String(),
-    "lat": lat,
-    "lon": lon,
-  };
+        "id": id,
+        "name": name,
+        "description": description,
+        "photoUrl": photoUrl,
+        "createdAt": createdAt?.toIso8601String(),
+        "lat": lat,
+        "lon": lon,
+      };
 }

@@ -1,17 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:story_app/config/data/network/canonical_path.dart';
-import 'package:story_app/config/data/network/dio_provider.dart';
+import 'package:story_app/config/data/network/service_network.dart';
 
 class StoryRepository {
   Future<Response> getListStory() async {
-    final response = DioProvider().get(
+    final response = ServiceNetwork().get(
       path: CanonicalPath.listStory,
     );
     return response;
   }
 
   Future<Response> getDetailStory({required String id}) async {
-    final response = DioProvider().get(
+    final response = ServiceNetwork().get(
       path: "${CanonicalPath.listStory}/$id",
     );
     return response;
@@ -32,10 +32,11 @@ class StoryRepository {
       'lon': longitude ?? 0,
     });
 
-    final response = DioProvider().post(
+    final response = ServiceNetwork().post(
       path: CanonicalPath.listStory,
       data: formData,
     );
+
     return response;
   }
 }

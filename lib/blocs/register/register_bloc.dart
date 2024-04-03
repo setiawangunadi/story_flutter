@@ -1,5 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
+import 'package:story_app/config/data/exception/network.dart';
+import 'package:story_app/config/data/exception/session_expired.dart';
 import 'package:story_app/config/models/register_response_model.dart';
 import 'package:story_app/config/repositories/register_repository.dart';
 
@@ -27,6 +29,10 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       if (data.error == false) {
         emit(OnSuccessRegister(data: data));
       }
+    } on Network catch (e) {
+      emit(OnFailedRegister(message: e.responseMessage));
+    } on SessionExpired catch (e) {
+      emit(OnFailedRegister(message: e.message));
     } catch (e) {
       emit(OnFailedRegister(message: e.toString()));
     }

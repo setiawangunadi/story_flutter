@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:story_app/blocs/home/home_bloc.dart';
 import 'package:story_app/config/models/get_stories_response_model.dart';
+import 'package:story_app/shared/widget/custom_toast.dart';
 
 class HomeScreen extends StatefulWidget {
   final Function(bool) onTappedAddStory;
@@ -42,6 +43,9 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         if (state is OnSuccessLogout) {
           widget.onTappedLogout(false);
+        }
+        if (state is OnFailedHome) {
+          AppToast.show(context, state.message, Colors.red);
         }
       },
       builder: (context, state) {
