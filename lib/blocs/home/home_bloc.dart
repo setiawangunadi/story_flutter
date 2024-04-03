@@ -24,7 +24,10 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   ) async {
     try {
       emit(OnLoadingHome());
-      final response = await storyRepository.getListStory();
+      final response = await storyRepository.getListStory(
+        size: event.size,
+        page: event.page,
+      );
       if (response.statusCode == 200) {
         GetStoriesResponseModel data =
             GetStoriesResponseModel.fromJson(response.data);

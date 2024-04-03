@@ -23,6 +23,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   @override
+  dispose(){
+    ctrlName.dispose();
+    ctrlEmail.dispose();
+    ctrlPassword.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<RegisterBloc, RegisterState>(
       listener: (context, state) {

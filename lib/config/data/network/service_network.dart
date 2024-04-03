@@ -3,6 +3,7 @@ import 'package:dio_http_formatter/dio_http_formatter.dart';
 import 'package:story_app/config/data/exception/network.dart';
 import 'package:story_app/config/data/exception/session_expired.dart';
 import 'package:story_app/config/data/local/constants.dart';
+import 'package:story_app/config/data/local/shared_prefs_storage.dart';
 
 class ServiceNetwork {
   final Dio dio = Dio()
@@ -29,10 +30,14 @@ class ServiceNetwork {
     required String path,
     Map<String, dynamic>? queryParameters,
   }) async {
+    var tokenId = await SharedPrefsStorage.getTokenId();
     try {
       final response = await dio.get(
         '$baseUrl$path',
         queryParameters: queryParameters,
+        options: Options(
+          headers: {"Authorization": "Bearer $tokenId"},
+        ),
       );
       return response;
     } on DioException catch (e) {
@@ -40,15 +45,20 @@ class ServiceNetwork {
     }
   }
 
-  Future<Response> post(
-      {required String path,
-      dynamic data,
-      Map<String, dynamic>? queryParameters}) async {
+  Future<Response> post({
+    required String path,
+    dynamic data,
+    Map<String, dynamic>? queryParameters,
+  }) async {
+    var tokenId = await SharedPrefsStorage.getTokenId();
     try {
       final response = await dio.post(
         '$baseUrl$path',
         data: data,
         queryParameters: queryParameters,
+        options: Options(
+          headers: {"Authorization": "Bearer $tokenId"},
+        ),
       );
       return response;
     } on DioException catch (e) {
@@ -57,12 +67,13 @@ class ServiceNetwork {
   }
 
   Future<Response> put({required String path, dynamic data}) async {
+    var tokenId = await SharedPrefsStorage.getTokenId();
     try {
       final response = await dio.put(
         '$baseUrl$path',
         data: data,
         options: Options(
-          headers: {"Authorization": "Bearer "},
+          headers: {"Authorization": "Bearer $tokenId"},
         ),
       );
       return response;

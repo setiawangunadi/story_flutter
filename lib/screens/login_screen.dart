@@ -32,6 +32,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   @override
+  dispose(){
+    ctrlEmail.dispose();
+    ctrlPassword.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return BlocConsumer<LoginBloc, LoginState>(
       listener: (context, state) {

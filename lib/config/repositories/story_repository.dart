@@ -3,9 +3,12 @@ import 'package:story_app/config/data/network/canonical_path.dart';
 import 'package:story_app/config/data/network/service_network.dart';
 
 class StoryRepository {
-  Future<Response> getListStory() async {
+  Future<Response> getListStory({required int page, required int size}) async {
+    Map<String, dynamic> queryParameters = {"page": page, "size": size};
+
     final response = ServiceNetwork().get(
       path: CanonicalPath.listStory,
+      queryParameters: queryParameters,
     );
     return response;
   }
