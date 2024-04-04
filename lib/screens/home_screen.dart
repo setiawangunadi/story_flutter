@@ -50,10 +50,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return BlocConsumer<HomeBloc, HomeState>(
       listener: (context, state) {
         if (state is OnSuccessHome) {
-          _refreshController.refreshCompleted();
+          _refreshController.loadComplete();
           setState(() {
             dataStories = state.data;
-            page++;
           });
           listDataStories += state.data.listStory ?? [];
         }
@@ -91,7 +90,6 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           );
         }
-
         return Scaffold(
           appBar: AppBar(
             title: const Text("List Story"),
@@ -110,13 +108,16 @@ class _HomeScreenState extends State<HomeScreen> {
           body: SmartRefresher(
             controller: _refreshController,
             enablePullUp: true,
-            onLoading: () => homeBloc.add(
-              GetListStory(
-                location: 0,
-                size: size,
-                page: page,
-              ),
-            ),
+            onLoading: () {
+              page++;
+              homeBloc.add(
+                GetListStory(
+                  location: 0,
+                  size: size,
+                  page: page,
+                ),
+              );
+            },
             child: SingleChildScrollView(
               physics: const ClampingScrollPhysics(),
               child: Column(
@@ -185,95 +186,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          // state is OnLoadingHome
-          //     ? Shimmer.fromColors(
-          //         direction: ShimmerDirection.ltr,
-          //         period: const Duration(milliseconds: 1200),
-          //         baseColor: Colors.grey.withOpacity(0.5),
-          //         highlightColor: Colors.white,
-          //         child: SizedBox(
-          //           width: MediaQuery.of(context).size.width,
-          //           height: MediaQuery.of(context).size.height * 0.8,
-          //           child: ListView.builder(
-          //             itemCount: 8,
-          //             itemBuilder: (context, index) {
-          //               return Container(
-          //                 width: MediaQuery.of(context).size.width,
-          //                 height: 78,
-          //                 margin: const EdgeInsets.all(8.0),
-          //                 decoration: BoxDecoration(
-          //                   color: Colors.grey.withOpacity(0.5),
-          //                   borderRadius: BorderRadius.circular(8),
-          //                 ),
-          //               );
-          //             },
-          //           ),
-          //         ),
-          //       )
-          //     : ,
-          // : ListView.builder(
-          //     itemCount: dataStories?.listStory?.length,
-          //     itemBuilder: (context, index) {
-          //       return GestureDetector(
-          //         onTap: () => widget.onTappedDetailStory(
-          //             true, dataStories?.listStory?[index].id ?? ""),
-          //         child: Container(
-          //           margin: const EdgeInsets.all(8.0),
-          //           padding: const EdgeInsets.all(16.0),
-          //           decoration: BoxDecoration(
-          //             color: Colors.white,
-          //             borderRadius: BorderRadius.circular(8.0),
-          //             boxShadow: const [
-          //               BoxShadow(
-          //                 color: Colors.blue,
-          //                 blurStyle: BlurStyle.outer,
-          //                 blurRadius: 4,
-          //                 offset: Offset(1, 1), // Shadow position
-          //               ),
-          //             ],
-          //           ),
-          //           child: Row(
-          //               crossAxisAlignment: CrossAxisAlignment.center,
-          //               children: [
-          //                 SizedBox(
-          //                   width: 100,
-          //                   height: 100,
-          //                   child: FittedBox(
-          //                     fit: BoxFit.fill,
-          //                     child: ClipRect(
-          //                       child: Image.network(
-          //                         dataStories?.listStory?[index].photoUrl ??
-          //                             "",
-          //                       ),
-          //                     ),
-          //                   ),
-          //                 ),
-          //                 const SizedBox(width: 16),
-          //                 SizedBox(
-          //                   width: MediaQuery.of(context).size.width / 2,
-          //                   child: Column(
-          //                     crossAxisAlignment: CrossAxisAlignment.start,
-          //                     children: [
-          //                       Text(
-          //                         dataStories?.listStory?[index].name ?? "",
-          //                         style: const TextStyle(
-          //                             fontWeight: FontWeight.bold,
-          //                             color: Colors.black,
-          //                             fontSize: 18),
-          //                       ),
-          //                       Text(
-          //                         dataStories
-          //                                 ?.listStory?[index].description ??
-          //                             "",
-          //                       ),
-          //                     ],
-          //                   ),
-          //                 ),
-          //               ]),
-          //         ),
-          //       );
-          //     },
-          //   ),
           floatingActionButton: FloatingActionButton(
             backgroundColor: Colors.amber,
             child: const Icon(Icons.add),
