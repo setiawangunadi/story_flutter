@@ -2,7 +2,7 @@ import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:story_app/config/data/exception/network.dart';
 import 'package:story_app/config/data/exception/session_expired.dart';
-import 'package:story_app/config/models/register_response_model.dart';
+import 'package:story_app/config/models/register.dart';
 import 'package:story_app/config/repositories/register_repository.dart';
 
 part 'register_event.dart';
@@ -24,8 +24,8 @@ class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
       emit(OnLoadingRegister());
       final response = await registerRepository.doRegister(
           name: event.name, email: event.email, password: event.password);
-      RegisterResponseModel data =
-          RegisterResponseModel.fromJson(response.data);
+      var data =
+          Register.fromJson(response.data);
       if (data.error == false) {
         emit(OnSuccessRegister(data: data));
       }

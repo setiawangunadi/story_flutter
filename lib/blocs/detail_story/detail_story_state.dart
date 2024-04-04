@@ -8,7 +8,7 @@ class DetailStoryInitial extends DetailStoryState {}
 class OnLoadingDetailStory extends DetailStoryState {}
 
 class OnSuccessDetailStory extends DetailStoryState {
-  final DetailStoryResponseModel data;
+  final DetailStory data;
 
   OnSuccessDetailStory({required this.data});
 

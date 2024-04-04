@@ -8,7 +8,7 @@ class RegisterInitial extends RegisterState {}
 class OnLoadingRegister extends RegisterState {}
 
 class OnSuccessRegister extends RegisterState {
-  final RegisterResponseModel data;
+  final Register data;
 
   OnSuccessRegister({required this.data});
 }

@@ -3,7 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:story_app/blocs/home/home_bloc.dart';
-import 'package:story_app/config/models/get_stories_response_model.dart';
+import 'package:story_app/config/models/get_stories.dart';
+import 'package:story_app/config/models/list_story.dart';
 import 'package:story_app/shared/widget/custom_toast.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -24,7 +25,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late HomeBloc homeBloc;
-  GetStoriesResponseModel? dataStories;
+  GetStories? dataStories;
   List<ListStory> listDataStories = [];
   int page = 1;
   int size = 10;

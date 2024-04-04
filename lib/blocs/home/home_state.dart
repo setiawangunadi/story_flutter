@@ -8,7 +8,7 @@ class HomeInitial extends HomeState {}
 class OnLoadingHome extends HomeState {}
 
 class OnSuccessHome extends HomeState {
-  final GetStoriesResponseModel data;
+  final GetStories data;
 
   OnSuccessHome({required this.data});
 }

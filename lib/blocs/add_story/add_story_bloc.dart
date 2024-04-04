@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:story_app/config/data/exception/network.dart';
 import 'package:story_app/config/data/exception/session_expired.dart';
-import 'package:story_app/config/models/add_story_response_model.dart';
+import 'package:story_app/config/models/add_story.dart';
 import 'package:story_app/config/repositories/story_repository.dart';
 
 part 'add_story_event.dart';
@@ -48,14 +48,14 @@ class AddStoryBloc extends Bloc<AddStoryEvent, AddStoryState> {
         longitude: event.lon,
         latitude: event.lat
       );
-      AddStoryResponseModel data =
-          AddStoryResponseModel.fromJson(response.data);
+      var data =
+          AddStory.fromJson(response.data);
       if (data.error == false) {
         emit(OnSuccessAddStory(data: data));
       }
 
       if (data.error == true) {
-        emit(OnFailedAddStory(message: data.message ?? ""));
+        emit(OnFailedAddStory(message: data.message));
       }
     } on Network catch (e) {
       emit(OnFailedAddStory(message: e.responseMessage));

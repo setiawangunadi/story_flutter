@@ -15,7 +15,7 @@ class OnSuccessInitialData extends AddStoryState {
 }
 
 class OnSuccessAddStory extends AddStoryState {
-  final AddStoryResponseModel data;
+  final AddStory data;
 
   OnSuccessAddStory({required this.data});
 }

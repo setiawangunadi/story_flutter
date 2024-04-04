@@ -3,7 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:story_app/config/data/exception/network.dart';
 import 'package:story_app/config/data/exception/session_expired.dart';
 import 'package:story_app/config/data/local/shared_prefs_storage.dart';
-import 'package:story_app/config/models/get_stories_response_model.dart';
+import 'package:story_app/config/models/get_stories.dart';
 import 'package:story_app/config/repositories/story_repository.dart';
 
 part 'home_event.dart';
@@ -29,8 +29,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
         page: event.page,
       );
       if (response.statusCode == 200) {
-        GetStoriesResponseModel data =
-            GetStoriesResponseModel.fromJson(response.data);
+        var data = GetStories.fromJson(response.data);
         if (data.error == false) {
           emit(OnSuccessHome(data: data));
         }

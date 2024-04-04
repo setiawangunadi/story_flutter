@@ -3,7 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:story_app/config/data/exception/network.dart';
 import 'package:story_app/config/data/exception/session_expired.dart';
 import 'package:story_app/config/data/local/shared_prefs_storage.dart';
-import 'package:story_app/config/models/login_response_model.dart';
+import 'package:story_app/config/models/login.dart';
 import 'package:story_app/config/repositories/login_repository.dart';
 
 part 'login_event.dart';
@@ -27,8 +27,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       final response = await loginRepository.doLogin(
           email: event.email, password: event.password);
       if (response.statusCode == 200) {
-        LoginResponseModel data = LoginResponseModel.fromJson(response.data);
-        SharedPrefsStorage.setTokenId(tokenId: data.loginResult?.token ?? "");
+        var data = Login.fromJson(response.data);
+        SharedPrefsStorage.setTokenId(tokenId: data.loginResult.token);
         SharedPrefsStorage.setLoggedIn(loggedIn: true);
         emit(OnSuccessLogin());
       }
