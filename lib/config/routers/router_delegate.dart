@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:story_app/blocs/add_story/add_story_bloc.dart';
 import 'package:story_app/blocs/detail_story/detail_story_bloc.dart';
 import 'package:story_app/blocs/home/home_bloc.dart';
@@ -9,7 +10,9 @@ import 'package:story_app/screens/add_story_screen.dart';
 import 'package:story_app/screens/detail_story_screen.dart';
 import 'package:story_app/screens/home_screen.dart';
 import 'package:story_app/screens/login_screen.dart';
+import 'package:story_app/screens/maps_screen.dart';
 import 'package:story_app/screens/register_screen.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 
 class MyRouterDelegate extends RouterDelegate
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
@@ -24,7 +27,13 @@ class MyRouterDelegate extends RouterDelegate
   bool isClickLogin = false;
   bool isClickAddStory = false;
   bool isClickDetailStory = false;
+  bool isClickLocation = false;
   String? storyId;
+  String? street;
+  String? pathImage;
+  String? descriptionStory;
+  LatLng? location;
+  geo.Placemark? placeMark;
 
   @override
   Widget build(BuildContext context) {
@@ -81,10 +90,20 @@ class MyRouterDelegate extends RouterDelegate
         if (isClickAddStory == true)
           MaterialPage(
             key: const ValueKey("AddStoryPage"),
-            maintainState: false,
+            maintainState: true,
             child: BlocProvider(
               create: (context) => AddStoryBloc(),
-              child: const AddStoryScreen(),
+              child: AddStoryScreen(
+                locationSelected: location,
+                street: street,
+                path: pathImage,
+                desc: descriptionStory,
+                onTappedLocation:
+                    (bool isSelected, String? path, String? desc) {
+                  isClickLocation = isSelected;
+                  notifyListeners();
+                },
+              ),
             ),
           ),
         if (isClickDetailStory == true)
@@ -94,6 +113,28 @@ class MyRouterDelegate extends RouterDelegate
             child: BlocProvider(
               create: (context) => DetailStoryBloc(),
               child: DetailStoryScreen(id: storyId ?? ''),
+            ),
+          ),
+        if (isClickLocation == true)
+          MaterialPage(
+            key: const ValueKey("MapsScreen"),
+            maintainState: false,
+            child: MapsScreen(
+              onSaveLocation: (
+                bool isSelected,
+                LatLng locationSelected,
+                geo.Placemark? dataLocation,
+                String? path,
+                String? desc,
+              ) {
+                isClickLocation = isSelected;
+                location = locationSelected;
+                street = dataLocation?.street;
+                pathImage = path;
+                descriptionStory = desc;
+                isClickAddStory = true;
+                notifyListeners();
+              },
             ),
           ),
       ],

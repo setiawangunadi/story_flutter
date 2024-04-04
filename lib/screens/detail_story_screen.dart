@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart' as geo;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:location/location.dart';
 import 'package:story_app/blocs/detail_story/detail_story_bloc.dart';
 
 class DetailStoryScreen extends StatefulWidget {
@@ -37,41 +36,43 @@ class _DetailStoryScreenState extends State<DetailStoryScreen> {
     return BlocConsumer<DetailStoryBloc, DetailStoryState>(
       listener: (context, state) async {
         if (state is OnSuccessDetailStory) {
-          final info = await geo.placemarkFromCoordinates(
-            state.data.story?.lat ?? 0,
-            state.data.story?.lon ?? 0,
-          );
-
-          final place = info[0];
-          final street = place.street;
-          final address =
-              '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
-          setState(() {
-            placemark = place;
-          });
-          final marker = Marker(
-            markerId: MarkerId(place.street ?? ""),
-            position: LatLng(
+          if (state.data.story?.lat != null && state.data.story?.lon != null) {
+            final info = await geo.placemarkFromCoordinates(
               state.data.story?.lat ?? 0,
               state.data.story?.lon ?? 0,
-            ),
-            infoWindow: InfoWindow(
-              title: street,
-              snippet: address,
-            ),
-            onTap: () {
-              mapController.animateCamera(
-                CameraUpdate.newLatLngZoom(
-                  LatLng(
-                    state.data.story?.lat ?? 0,
-                    state.data.story?.lon ?? 0,
+            );
+
+            final place = info[0];
+            final street = place.street;
+            final address =
+                '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+            setState(() {
+              placemark = place;
+            });
+            final marker = Marker(
+              markerId: MarkerId(place.street ?? ""),
+              position: LatLng(
+                state.data.story?.lat ?? 0,
+                state.data.story?.lon ?? 0,
+              ),
+              infoWindow: InfoWindow(
+                title: street,
+                snippet: address,
+              ),
+              onTap: () {
+                mapController.animateCamera(
+                  CameraUpdate.newLatLngZoom(
+                    LatLng(
+                      state.data.story?.lat ?? 0,
+                      state.data.story?.lon ?? 0,
+                    ),
+                    18,
                   ),
-                  18,
-                ),
-              );
-            },
-          );
-          markers.add(marker);
+                );
+              },
+            );
+            markers.add(marker);
+          }
         }
       },
       builder: (context, state) {
@@ -184,62 +185,5 @@ class _DetailStoryScreenState extends State<DetailStoryScreen> {
         );
       },
     );
-  }
-
-  void onMyLocationButtonPress() async {
-    final Location location = Location();
-    late LocationData locationData;
-
-    locationData = await location.getLocation();
-    final latLng = LatLng(locationData.latitude!, locationData.longitude!);
-
-    final info =
-        await geo.placemarkFromCoordinates(latLng.latitude, latLng.longitude);
-
-    final place = info[0];
-    final street = place.street;
-    final address =
-        '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
-    setState(() {
-      placemark = place;
-    });
-
-    defineMarker(latLng, street ?? "", address);
-
-    mapController.animateCamera(
-      CameraUpdate.newLatLng(latLng),
-    );
-  }
-
-  void onLongPressGoogleMap(LatLng latLng) async {
-    final info =
-        await geo.placemarkFromCoordinates(latLng.latitude, latLng.longitude);
-    final place = info[0];
-    final street = place.street!;
-    final address =
-        '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
-    setState(() {
-      placemark = place;
-    });
-    defineMarker(latLng, street, address);
-
-    mapController.animateCamera(
-      CameraUpdate.newLatLng(latLng),
-    );
-  }
-
-  void defineMarker(LatLng latLng, String street, String address) {
-    final marker = Marker(
-      markerId: const MarkerId("source"),
-      position: latLng,
-      infoWindow: InfoWindow(
-        title: street,
-        snippet: address,
-      ),
-    );
-    setState(() {
-      markers.clear();
-      markers.add(marker);
-    });
   }
 }

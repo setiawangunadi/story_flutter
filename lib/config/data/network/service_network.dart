@@ -118,6 +118,12 @@ class ServiceNetwork {
             statusCode: e.response?.statusCode,
           );
         }
+        if (e.response!.statusCode == 413) {
+          throw Network(
+            responseMessage: e.response?.data["message"],
+            httpStatus: e.response?.statusCode,
+          );
+        }
         if (e.response!.statusCode == 502) {
           throw Network(
             responseMessage: e.response?.data["message"],

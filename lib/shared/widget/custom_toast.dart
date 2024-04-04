@@ -55,7 +55,7 @@ class AppToast {
     );
     Overlay.of(context).insert(overlayEntry);
     Future.delayed(
-      const Duration(seconds: 1),
+      const Duration(seconds: 3),
           () => overlayEntry?.remove(),
     );
   }

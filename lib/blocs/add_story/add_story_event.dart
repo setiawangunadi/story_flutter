@@ -3,13 +3,20 @@ part of 'add_story_bloc.dart';
 @immutable
 abstract class AddStoryEvent {}
 
+class DoInitialData extends AddStoryEvent {
+  final String? path;
+  final String? desc;
+
+  DoInitialData(this.path, this.desc);
+}
+
 class DoAddStory extends AddStoryEvent {
   final String description;
   final dynamic bytes;
   final String filename;
   final String filePath;
-  final Float? lat;
-  final Float? lon;
+  final dynamic lat;
+  final dynamic lon;
 
   DoAddStory({
     required this.description,

@@ -7,6 +7,13 @@ class AddStoryInitial extends AddStoryState {}
 
 class OnLoadingAddStory extends AddStoryState {}
 
+class OnSuccessInitialData extends AddStoryState {
+  final String? path;
+  final String? desc;
+
+  OnSuccessInitialData(this.path, this.desc);
+}
+
 class OnSuccessAddStory extends AddStoryState {
   final AddStoryResponseModel data;
 
