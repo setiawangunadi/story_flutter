@@ -3,13 +3,16 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:location/location.dart';
 import 'package:story_app/blocs/add_story/add_story_bloc.dart';
 import 'package:story_app/shared/widget/custom_toast.dart';
 
 class AddStoryScreen extends StatefulWidget {
   final Function(bool, String?, String?) onTappedLocation;
+  final Function(LatLng, geo.Placemark?) onSaveLocation;
   final LatLng? locationSelected;
   final String? street;
   final String? path;
@@ -22,6 +25,7 @@ class AddStoryScreen extends StatefulWidget {
     this.street,
     this.path,
     this.desc,
+    required this.onSaveLocation,
   });
 
   @override
@@ -29,7 +33,18 @@ class AddStoryScreen extends StatefulWidget {
 }
 
 class _AddStoryScreenState extends State<AddStoryScreen> {
+  late GoogleMapController mapController;
+
+  geo.Placemark? placemark;
+
+  LatLng location = const LatLng(-6.8957473, 107.6337669);
+  final Set<Marker> markers = {};
+
+  MapType selectedMapType = MapType.normal;
   final TextEditingController ctrlDesc = TextEditingController();
+  final TextEditingController ctrlLocation = TextEditingController();
+  final dicodingOffice = const LatLng(-6.8957473, 107.6337669);
+
   late AddStoryBloc addStoryBloc;
   XFile? file;
   String? imagePath;
@@ -46,7 +61,6 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
     return BlocConsumer<AddStoryBloc, AddStoryState>(
       listener: (context, state) {
         if (state is OnSuccessInitialData) {
-          debugPrint("INITIAL STATE ACTION");
           setState(() {
             imagePath = state.path;
             ctrlDesc.text = state.desc ?? "";
@@ -57,6 +71,7 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
             imagePath = null;
           });
           ctrlDesc.clear();
+          ctrlLocation.clear();
 
           AppToast.show(context, state.data.message ?? "", Colors.green);
         }
@@ -125,12 +140,115 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () =>
-                      widget.onTappedLocation(true, imagePath, ctrlDesc.text),
+                  // onTap: () =>
+                  //     widget.onTappedLocation(true, imagePath, ctrlDesc.text),
+                  onTap: () => showModalBottomSheet(
+                    context: context,
+                    builder: (context) {
+                      return Container(
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.only(
+                            topRight: Radius.circular(8.0),
+                            topLeft: Radius.circular(8.0),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Center(
+                                      child: Text(
+                                        "Select Location",
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Icon(Icons.close),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Expanded(
+                              child: Stack(
+                                children: [
+                                  GoogleMap(
+                                    initialCameraPosition: CameraPosition(
+                                      zoom: 18,
+                                      target: location,
+                                    ),
+                                    markers: markers,
+                                    zoomControlsEnabled: false,
+                                    mapToolbarEnabled: false,
+                                    myLocationEnabled: true,
+                                    myLocationButtonEnabled: false,
+                                    onMapCreated: (controller) async {
+                                      final info =
+                                          await geo.placemarkFromCoordinates(
+                                              location.latitude,
+                                              location.longitude);
+                                      final place = info[0];
+                                      final street = place.street!;
+                                      final address =
+                                          '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+                                      setState(() {
+                                        placemark = place;
+                                      });
+                                      defineMarker(location, street, address);
+                                      setState(() {
+                                        mapController = controller;
+                                      });
+                                    },
+                                    onLongPress: (LatLng latLng) {
+                                      onLongPressGoogleMap(latLng);
+                                    },
+                                  ),
+                                  Positioned(
+                                    top: 16,
+                                    right: 16,
+                                    child: Column(
+                                      children: [
+                                        FloatingActionButton(
+                                          child: const Icon(Icons.my_location),
+                                          onPressed: () {
+                                            onMyLocationButtonPress();
+                                          },
+                                        ),
+                                        const SizedBox(height: 8),
+                                        FloatingActionButton(
+                                          tooltip: "Save Location",
+                                          child: const Icon(
+                                            Icons.save,
+                                            size: 32,
+                                          ),
+                                          onPressed: () {
+                                            Navigator.pop(context);
+                                            ctrlLocation.text = placemark?.street ?? "";
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
                     child: TextFormField(
-                      initialValue: widget.street ?? "",
+                      controller: ctrlLocation,
                       decoration: const InputDecoration(
                         hintText: "Select Your Location",
                         fillColor: Colors.grey,
@@ -185,8 +303,8 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
         bytes: bytes,
         filename: fileName,
         filePath: file?.path ?? "",
-        lat: widget.locationSelected?.latitude ?? 0.0,
-        lon: widget.locationSelected?.longitude ?? 0.0,
+        lat: widget.locationSelected?.latitude,
+        lon: widget.locationSelected?.longitude,
       ),
     );
   }
@@ -237,5 +355,83 @@ class _AddStoryScreenState extends State<AddStoryScreen> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height / 3,
           );
+  }
+
+  void onMyLocationButtonPress() async {
+    final Location locations = Location();
+    late bool serviceEnabled;
+    late PermissionStatus permissionGranted;
+    late LocationData locationData;
+
+    serviceEnabled = await locations.serviceEnabled();
+    if (!serviceEnabled) {
+      serviceEnabled = await locations.requestService();
+      if (!serviceEnabled) {
+        print("Location services is not available");
+        return;
+      }
+    }
+    permissionGranted = await locations.hasPermission();
+    if (permissionGranted == PermissionStatus.denied) {
+      permissionGranted = await locations.requestPermission();
+      if (permissionGranted != PermissionStatus.granted) {
+        print("Location permission is denied");
+        return;
+      }
+    }
+
+    locationData = await locations.getLocation();
+    final latLng = LatLng(locationData.latitude!, locationData.longitude!);
+
+    final info =
+        await geo.placemarkFromCoordinates(latLng.latitude, latLng.longitude);
+
+    final place = info[0];
+    final street = place.street;
+    final address =
+        '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+    setState(() {
+      placemark = place;
+    });
+
+    defineMarker(latLng, street ?? "", address);
+    widget.onSaveLocation(location, placemark);
+
+    mapController.animateCamera(
+      CameraUpdate.newLatLng(latLng),
+    );
+  }
+
+  void onLongPressGoogleMap(LatLng latLng) async {
+    final info =
+        await geo.placemarkFromCoordinates(latLng.latitude, latLng.longitude);
+    final place = info[0];
+    final street = place.street;
+    final address =
+        '${place.subLocality}, ${place.locality}, ${place.postalCode}, ${place.country}';
+    setState(() {
+      placemark = place;
+      location = latLng;
+    });
+    defineMarker(latLng, street ?? "", address);
+    widget.onSaveLocation(location, placemark);
+    mapController.animateCamera(
+      CameraUpdate.newLatLng(latLng),
+    );
+  }
+
+  void defineMarker(LatLng latLng, String street, String address) {
+    final marker = Marker(
+      markerId: const MarkerId("source"),
+      position: latLng,
+      infoWindow: InfoWindow(
+        title: street,
+        snippet: address,
+      ),
+    );
+    setState(() {
+      markers.clear();
+      markers.add(marker);
+    });
   }
 }
