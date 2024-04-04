@@ -1,7 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:story_app/config/routers/router_delegate.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final Location location = Location();
+  late bool serviceEnabled;
+  late PermissionStatus permissionGranted;
+  serviceEnabled = await location.serviceEnabled();
+  if (!serviceEnabled) {
+    serviceEnabled = await location.requestService();
+    if (!serviceEnabled) {
+      print("Location services is not available");
+      return;
+    }
+  }
+  permissionGranted = await location.hasPermission();
+  if (permissionGranted == PermissionStatus.denied) {
+    permissionGranted = await location.requestPermission();
+    if (permissionGranted != PermissionStatus.granted) {
+      print("Location permission is denied");
+      return;
+    }
+  }
+
   runApp(const MyApp());
 }
 
