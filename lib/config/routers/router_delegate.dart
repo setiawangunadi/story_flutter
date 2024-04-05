@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart' as geo;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:story_app/blocs/add_story/add_story_bloc.dart';
 import 'package:story_app/blocs/detail_story/detail_story_bloc.dart';
@@ -12,7 +14,6 @@ import 'package:story_app/screens/home_screen.dart';
 import 'package:story_app/screens/login_screen.dart';
 import 'package:story_app/screens/maps_screen.dart';
 import 'package:story_app/screens/register_screen.dart';
-import 'package:geocoding/geocoding.dart' as geo;
 
 class MyRouterDelegate extends RouterDelegate
     with ChangeNotifier, PopNavigatorRouterDelegateMixin {
@@ -71,6 +72,11 @@ class MyRouterDelegate extends RouterDelegate
             child: BlocProvider(
               create: (context) => HomeBloc(),
               child: HomeScreen(
+                onBackPressed: () {
+                  debugPrint("ON BACK PRESSED");
+                  SystemNavigator.pop();
+                  notifyListeners();
+                },
                 onTappedAddStory: (bool isSelected) {
                   isClickAddStory = isSelected;
                   notifyListeners();
