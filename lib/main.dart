@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:location/location.dart';
+import 'package:provider/provider.dart';
+import 'package:story_app/config/routers/page_manager.dart';
 import 'package:story_app/config/routers/router_delegate.dart';
 
 Future<void> main() async {
@@ -45,13 +47,16 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Story App',
-      theme: ThemeData(),
-      debugShowCheckedModeBanner: false,
-      home: Router(
-        routerDelegate: myRouterDelegate,
-        backButtonDispatcher: RootBackButtonDispatcher(),
+    return ChangeNotifierProvider(
+      create: (context) => PageManager(),
+      child: MaterialApp(
+        title: 'Story App',
+        theme: ThemeData(),
+        debugShowCheckedModeBanner: false,
+        home: Router(
+          routerDelegate: myRouterDelegate,
+          backButtonDispatcher: RootBackButtonDispatcher(),
+        ),
       ),
     );
   }

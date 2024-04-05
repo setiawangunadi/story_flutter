@@ -10,6 +10,7 @@ import 'package:story_app/screens/add_story_screen.dart';
 import 'package:story_app/screens/detail_story_screen.dart';
 import 'package:story_app/screens/home_screen.dart';
 import 'package:story_app/screens/login_screen.dart';
+import 'package:story_app/screens/maps_screen.dart';
 import 'package:story_app/screens/register_screen.dart';
 import 'package:geocoding/geocoding.dart' as geo;
 
@@ -97,11 +98,6 @@ class MyRouterDelegate extends RouterDelegate
                 street: street,
                 path: pathImage,
                 desc: descriptionStory,
-                onSaveLocation: (LatLng dataLocation, geo.Placemark? place) {
-                  location = dataLocation;
-                  street = place?.street ?? "";
-                  notifyListeners();
-                },
                 onTappedLocation:
                     (bool isSelected, String? path, String? desc) {
                   isClickLocation = isSelected;
@@ -119,6 +115,23 @@ class MyRouterDelegate extends RouterDelegate
               child: DetailStoryScreen(id: storyId ?? ''),
             ),
           ),
+        if (isClickLocation == true)
+          MaterialPage(
+            key: const ValueKey("MapsPage"),
+            maintainState: false,
+            child: MapsScreen(
+              onSavedLocation: (
+                bool value,
+                LatLng dataLocation,
+                String dataStreet,
+              ) {
+                isClickLocation = false;
+                location = dataLocation;
+                street = dataStreet;
+                notifyListeners();
+              },
+            ),
+          ),
       ],
       onPopPage: (route, result) {
         final didPop = route.didPop(result);
@@ -128,6 +141,7 @@ class MyRouterDelegate extends RouterDelegate
         isClickRegister = false;
         isClickAddStory = false;
         isClickDetailStory = false;
+        isClickLocation = false;
         notifyListeners();
         return true;
       },
