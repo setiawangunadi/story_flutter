@@ -11,7 +11,6 @@ class OnSuccessDetailStory extends DetailStoryState {
   final DetailStory data;
 
   OnSuccessDetailStory({required this.data});
-
 }
 
 class OnFailedDetailStory extends DetailStoryState {

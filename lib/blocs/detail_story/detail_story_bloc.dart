@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:story_app/config/data/exception/network.dart';
 import 'package:story_app/config/data/exception/session_expired.dart';
@@ -23,8 +24,10 @@ class DetailStoryBloc extends Bloc<DetailStoryEvent, DetailStoryState> {
     try {
       emit(OnLoadingDetailStory());
       final response = await storyRepository.getDetailStory(id: event.id);
+      debugPrint("THIS DATA RESPONSE : ${response.data}");
       if (response.statusCode == 200) {
         var data = DetailStory.fromJson(response.data);
+        debugPrint("THIS DATA RESPONSE : ${data.story?.toJson()}");
         if (data.error == false) {
           emit(OnSuccessDetailStory(data: data));
         }
