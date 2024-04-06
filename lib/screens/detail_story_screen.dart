@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geocoding/geocoding.dart' as geo;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:story_app/blocs/detail_story/detail_story_bloc.dart';
-import 'package:story_app/config/models/detail_story.dart';
 
 class DetailStoryScreen extends StatefulWidget {
   final String id;
@@ -17,8 +16,6 @@ class DetailStoryScreen extends StatefulWidget {
 class _DetailStoryScreenState extends State<DetailStoryScreen> {
   late DetailStoryBloc detailStoryBloc;
   late GoogleMapController mapController;
-
-  DetailStory? detailStory;
 
   geo.Placemark? placemark;
 
@@ -39,10 +36,6 @@ class _DetailStoryScreenState extends State<DetailStoryScreen> {
     return BlocConsumer<DetailStoryBloc, DetailStoryState>(
       listener: (context, state) async {
         if (state is OnSuccessDetailStory) {
-          debugPrint("THIS RESPONSE: ${state.data.story?.toJson()}");
-          setState(() {
-            detailStory = state.data;
-          });
           if (state.data.story?.lat != null && state.data.story?.lon != null) {
             final info = await geo.placemarkFromCoordinates(
               state.data.story?.lat ?? 0,
@@ -87,111 +80,115 @@ class _DetailStoryScreenState extends State<DetailStoryScreen> {
           appBar: AppBar(
             title: const Text("Detail Story"),
           ),
-          body: SizedBox(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      height: MediaQuery.of(context).size.height * 0.4,
-                      child: FittedBox(
-                        fit: BoxFit.fill,
-                        child: ClipRect(
-                          child: Image.network(
-                            detailStory?.story?.photoUrl ?? "",
-                            errorBuilder: (context, error, stackTrace) {
-                              return const Icon(
-                                Icons.image_not_supported_outlined,
-                                size: 64,
-                              );
-                            },
+          body: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
+            child: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (state is OnSuccessDetailStory)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width,
+                          height: MediaQuery.of(context).size.height * 0.4,
+                          child: FittedBox(
+                            fit: BoxFit.fill,
+                            child: ClipRect(
+                              child: Image.network(
+                                state.data.story?.photoUrl ?? "",
+                                errorBuilder: (context, error, stackTrace) {
+                                  return const Icon(
+                                    Icons.image_not_supported_outlined,
+                                    size: 64,
+                                  );
+                                },
+                              ),
+                            ),
                           ),
                         ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            detailStory?.story?.name ?? "",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black,
-                                fontSize: 18),
-                          ),
-                          Text(
-                            detailStory?.story?.description ?? "",
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (detailStory?.story?.lat != null &&
-                        detailStory?.story?.lon != null)
-                      Stack(
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            height: MediaQuery.of(context).size.height * 0.3,
-                            child: GoogleMap(
-                              mapType: selectedMapType,
-                              markers: markers,
-                              myLocationEnabled: true,
-                              myLocationButtonEnabled: false,
-                              zoomControlsEnabled: false,
-                              mapToolbarEnabled: false,
-                              initialCameraPosition: CameraPosition(
-                                target: LatLng(
-                                  detailStory?.story?.lat ?? 0,
-                                  detailStory?.story?.lon ?? 0,
-                                ),
-                                zoom: 18,
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                state.data.story?.name ?? "",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black,
+                                    fontSize: 18),
                               ),
-                              onMapCreated: (controller) {
-                                setState(() {
-                                  mapController = controller;
-                                });
-                              },
-                            ),
+                              Text(
+                                state.data.story?.description ?? "",
+                              ),
+                            ],
                           ),
-                          Positioned(
-                            bottom: 16,
-                            right: 16,
-                            child: Column(
-                              children: [
-                                FloatingActionButton.small(
-                                  heroTag: "zoom-in",
-                                  onPressed: () {
-                                    mapController.animateCamera(
-                                      CameraUpdate.zoomIn(),
-                                    );
+                        ),
+                        if (state.data.story?.lat != null &&
+                            state.data.story?.lon != null)
+                          Stack(
+                            children: [
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width,
+                                height: MediaQuery.of(context).size.height * 0.3,
+                                child: GoogleMap(
+                                  mapType: selectedMapType,
+                                  markers: markers,
+                                  myLocationEnabled: true,
+                                  myLocationButtonEnabled: false,
+                                  zoomControlsEnabled: false,
+                                  mapToolbarEnabled: false,
+                                  initialCameraPosition: CameraPosition(
+                                    target: LatLng(
+                                      state.data.story?.lat ?? 0,
+                                      state.data.story?.lon ?? 0,
+                                    ),
+                                    zoom: 18,
+                                  ),
+                                  onMapCreated: (controller) {
+                                    setState(() {
+                                      mapController = controller;
+                                    });
                                   },
-                                  child: const Icon(Icons.add),
                                 ),
-                                FloatingActionButton.small(
-                                  heroTag: "zoom-out",
-                                  onPressed: () {
-                                    mapController.animateCamera(
-                                      CameraUpdate.zoomOut(),
-                                    );
-                                  },
-                                  child: const Icon(Icons.remove),
+                              ),
+                              Positioned(
+                                bottom: 16,
+                                right: 16,
+                                child: Column(
+                                  children: [
+                                    FloatingActionButton.small(
+                                      heroTag: "zoom-in",
+                                      onPressed: () {
+                                        mapController.animateCamera(
+                                          CameraUpdate.zoomIn(),
+                                        );
+                                      },
+                                      child: const Icon(Icons.add),
+                                    ),
+                                    FloatingActionButton.small(
+                                      heroTag: "zoom-out",
+                                      onPressed: () {
+                                        mapController.animateCamera(
+                                          CameraUpdate.zoomOut(),
+                                        );
+                                      },
+                                      child: const Icon(Icons.remove),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
-                  ],
-                ),
-              ],
+                      ],
+                    ),
+                ],
+              ),
             ),
           ),
         );
